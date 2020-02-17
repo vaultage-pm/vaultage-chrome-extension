@@ -41,6 +41,7 @@ function getFullURL() {
 }
 
 async function submitForm() {
+    $error.innerText = '';
     $loginFrame.classList.add('hidden');
     $loadingFrame.classList.remove('hidden');
     try {
