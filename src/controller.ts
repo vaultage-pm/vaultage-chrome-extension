@@ -10,6 +10,8 @@ const client = new Client();
 const $host = document.getElementById('login-host') as HTMLInputElement;
 const $username = document.getElementById('login-username') as HTMLInputElement;
 const $password = document.getElementById('login-password') as HTMLInputElement;
+const $basicUsername = document.getElementById('basic-username') as HTMLInputElement;
+const $basicPassword = document.getElementById('basic-password') as HTMLInputElement;
 const $form = document.getElementById('login-form') as HTMLFormElement;
 const $error = document.getElementById('error') as HTMLElement;
 
@@ -26,12 +28,24 @@ $form.addEventListener('submit', (evt) => {
 
 restoreCached();
 
+function getFullURL() {
+    const base = $host.value.split('://');
+
+    const user = $basicUsername.value;
+    const password = $basicPassword.value;
+    
+    if (user != '' || password != '') {
+        return `${base[0]}://${user}:${password}@${base.slice(1).join('://')}`;
+    }
+    return base.join('://');
+}
+
 async function submitForm() {
     $loginFrame.classList.add('hidden');
     $loadingFrame.classList.remove('hidden');
     try {
         const response = await client.send(LOGIN_MESSAGE, {
-            host: $host.value,
+            host: getFullURL(),
             username: $username.value,
             password: $password.value
         });
@@ -88,6 +102,8 @@ function restoreCached() {
         const creds = JSON.parse(cached);
         $host.value = creds.host;
         $username.value = creds.username;
+        $basicUsername.value = creds.basic?.user ?? '';
+        $basicPassword.value = creds.basic?.password ?? '';
         $password.focus();
     } else {
         $host.focus();
@@ -97,7 +113,11 @@ function restoreCached() {
 function saveCached() {
     const creds = {
         host: $host.value,
-        username: $username.value
+        username: $username.value,
+        basic: {
+            user: $basicUsername.value,
+            password: $basicPassword.value
+        }
     };
 
     localStorage.setItem('vaultage:cached-creds', JSON.stringify(creds));
