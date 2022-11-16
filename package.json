@@ -31,7 +31,7 @@
         "tslint": "^5.10.0",
         "typescript": "3.7.5",
         "webpack": "^4.41.6",
-        "webpack-cli": "3.3.11"
+        "webpack-cli": "3.3.12"
     },
     "dependencies": {
         "copy-to-clipboard": "^3.0.8",
